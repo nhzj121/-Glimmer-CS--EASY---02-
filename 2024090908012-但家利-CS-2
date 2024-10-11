@@ -1,2 +1,145 @@
 # 2024090908012-但家利-CS-2
 ## Part1
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node  //用`typedef`定义一个名为Node 的结构体，方便后续声明变量
+{
+    int data;      //在结构体中定义一个名为data 的变量，用于存储节点
+    struct Node* next;   //在结构体中定义一个名为next 的指针，用于指向链表中的下一个节点
+}
+Node;  //以Node 为结构体的标签
+
+Node* creatNode(int data)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL)
+    {
+        printf("failed\n");
+        exit(1);
+    }
+    newNode->data = data;   //将传入的数据data赋值给新创建的节点newNode的data字段
+    newNode->next = NULL;   //新创建的节点newNode的next指针设置为NULL，表示这个节点是链表的最后一个节点
+    return newNode;        //这行代码返回新创建的节点newNode
+}
+
+void removePs(Node** head, int posion)
+{
+    if(posion==0)
+    {
+        Node* temp= *head;   //创建临时指针temp，指向当前的头节点
+        *head =(*head)->next;   //将这行代码的头节点更新为头节点的下一个节点，从而绕过头节点
+        free(temp);
+        return;
+    }
+
+    Node* temp= *head;
+    for(int i=1;temp != NULL && i<posion-1;i++)
+    {
+        temp=temp->next;
+    }
+    if(temp==NULL || temp->next==NULL)
+    {
+        return;
+    }
+    Node* nodeToRe=temp->next;  //获取temp的下一个节点，即要删除的节点赋值给nodeToRe
+    temp->next=nodeToRe->next;  //将temp的next指针指向nodeToRe的下一个节点，从而绕过nodeToRe
+    free(nodeToRe);
+}
+
+void insertEnd(Node** head, int data)  //接受一个指向链表头指针的指针head和一个要操作的数据data
+{
+    Node* newNode= creatNode(data);
+    if(*head==NULL)
+    {
+        *head = newNode;  //将新节点设置为链表的头节点
+    }
+    else
+    {
+        Node* temp=*head;
+        while (temp->next !=NULL)
+        {
+            temp=temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void DBL(Node* head)
+{
+    Node* temp=head;
+    while (temp->next !=NULL)   //历遍所有节点至最后一个节点
+    {
+        temp=temp->next;
+    }
+    temp->next = head;
+}
+
+void insertHead(Node** head, int data)
+{
+    Node* newNode= creatNode(data);
+    newNode->next=*head;
+    *head=newNode;
+}
+
+void printList(Node* head)
+{
+    Node* temp=head;
+    while(temp != NULL)
+    {
+        printf("%d->",temp->data);
+        temp=temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main()
+{
+    Node* head= NULL;
+    insertHead(&head, 1);
+    int k,a,b,c,m;
+    int i=0 , u=0;
+    int j=2;
+    int sum=1;
+    char ch;
+    for(;;)
+    {
+        scanf(" %c",&ch);
+        k=(int)ch;
+        if(k==72)
+        {
+            scanf("%d %d %d",&a,&b,&c);  //H
+            insertHead(&head, c);
+            insertHead(&head, b);
+            insertHead(&head, a);
+            sum += 3;
+            continue;
+        }
+        if(k==84)
+        {
+            scanf("%d %d %d",&a,&b,&c);   //T
+            insertEnd(&head, a);
+            insertEnd(&head, b);
+            insertEnd(&head, c);
+            sum += 3;
+            continue;
+         }
+        if(k==68)    //D
+        {
+            scanf("%d",&m);
+            removePs(&head,m);
+            sum -= 1;
+            continue;
+        }
+        if(k==67)
+        {
+             DBL(head);
+             continue;      //C
+        }
+        else
+        {
+            break;
+        }
+    }
